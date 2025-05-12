@@ -29,14 +29,19 @@ int strobeDown(int delay){
     return 0;
 }
 
-int reset(){
-    system("asusctl -k off");
+int reset(std::string color){
+    // Wont bite me in the ass later having the function that sets
+    // The color in a reset function
+    std::string command = "asusctl aura static -c " + color;
+    system(command.c_str());
+    system("asusctl -k off ");
     return 0;
 };
 
 int main(int argc, char* argv[]){
     int cycle = 3;
     int delay = 150;
+    std::string color = "ff0000";
     for(int i = 0; i < argc; i++){
         std::string arg = argv[i];
 
@@ -46,21 +51,18 @@ int main(int argc, char* argv[]){
         } else if (arg == "--delay" && i + 1 < argc){
             delay = std::atoi(argv[i + 1]);
             i++;
-        } else if (i > 1) {
-            std::cerr << "Unknown argument: " << arg << std::endl;
-            std::cerr << "Correct arguments: --delay || --cycle." << std::endl;
-        }
+        } else if(arg == "--color" && i + 1 < argc){
+            color = std::string(argv[i+1]);
+        }    
     }
 
-    reset();
+    reset(color);
 
     for (int i = 0; i < cycle; i++){
         strobeUp(delay);
         strobeDown(delay);
     }
-    
     system("asusctl -n");
-
 
     return 0;
 }
